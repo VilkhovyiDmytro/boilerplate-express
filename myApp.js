@@ -1,11 +1,13 @@
 let express = require("express");
 let app = express();
 
-app.get("/api/:date", (req, res) => {
-  const date = Number(req.params.date)
-    ? new Date(+req.params.date)
-    : new Date(req.params.date);
-  res.status(200).json({
+app.get("/api/:date?", (req, res) => {
+  const d = req.params.date || Date.now();
+  const date = new Date(+d ? +d : d);
+
+  if (!date.getTime()) return res.json({ error: "Invalid Date" });
+
+  res.json({
     unix: Date.parse(date),
     utc: date.toUTCString(),
   });
